@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Intelligence System</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="shell">
+    <!-- القايمة الجانبية -->
+    <aside class="side">
+      <div class="brand">
+        <span class="logo" id="logo"></span>
+        <div><b>Customer</b><br><b>Intelligence</b></div>
+      </div>
+      <nav class="nav" aria-label="التنقل">
+        <a href="#overview" data-view="overview" id="nav-overview"></a>
+        <a href="#customers" data-view="customers" id="nav-customers"></a>
+        <a href="#segments" data-view="segments" id="nav-segments"></a>
+        <a href="#actions" data-view="actions" id="nav-actions"></a>
+      </nav>
+      <div class="side-foot" id="side-foot"></div>
+    </aside>
+
+    <main class="main">
+      <!-- ========== نظرة عامة ========== -->
+      <section id="view-overview" class="view">
+        <header class="page-head">
+          <h1>نظرة عامة على العملاء</h1>
+          <p class="sub" id="range"></p>
+        </header>
+
+        <div class="kpis" id="kpis"></div>
+
+        <div class="grid g-wide">
+          <article class="panel">
+            <h2>الطلبات الأسبوعية</h2>
+            <p class="hint">عدد الطلبات المُسلَّمة كل أسبوع</p>
+            <div id="chart-weekly" class="chart"></div>
+          </article>
+          <article class="panel">
+            <h2>حالة العملاء</h2>
+            <p class="hint">حسب آخر طلب مقارنةً بمعتاد كل عميل</p>
+            <div id="chart-status"></div>
+          </article>
+        </div>
+
+        <div class="grid g-three">
+          <article class="panel">
+            <h2>المبيعات حسب الفئة</h2>
+            <p class="hint">من إجمالي مبيعات الطلبات المُسلَّمة</p>
+            <div id="chart-categories"></div>
+          </article>
+          <article class="panel">
+            <h2>المبيعات الشهرية</h2>
+            <p class="hint">إجمالي قيمة الطلبات المُسلَّمة</p>
+            <div id="chart-months" class="chart"></div>
+          </article>
+          <article class="panel">
+            <h2>الطلبات حسب يوم الأسبوع</h2>
+            <p class="hint">كل الفترة</p>
+            <div id="chart-weekdays" class="chart"></div>
+          </article>
+        </div>
+
+        <article class="panel">
+          <h2>الصورة العامة: اللي الداتا بتقوله</h2>
+          <div class="findings" id="findings"></div>
+          <p class="foot-note">"مؤكد من الداتا" معناها إن الفرق أكبر بكتير من اللي بيحصل صدفة. "إشارة ضعيفة" معناها محتمل بس مش مؤكد. الأرقام محسوبة من الطلبات المُسلَّمة فقط.</p>
+        </article>
+      </section>
+
+      <!-- ========== العملاء ========== -->
+      <section id="view-customers" class="view hidden">
+        <header class="page-head">
+          <h1>العملاء</h1>
+          <p class="sub" id="count"></p>
+        </header>
+
+        <form id="filters" class="filters" autocomplete="off">
+          <input id="q" type="search" placeholder="ابحث برقم العميل (مثلًا U-0001)" aria-label="بحث برقم العميل">
+          <select id="city" aria-label="المدينة"><option value="">كل المدن</option></select>
+          <select id="user_type" aria-label="نوع العميل"><option value="">كل الأنواع</option></select>
+          <select id="status" aria-label="حالة العميل">
+            <option value="">كل الحالات</option>
+            <option value="active">نشط</option>
+            <option value="at_risk">معرّض للغياب</option>
+            <option value="lapsed">غايب عن معتاده</option>
+          </select>
+          <select id="rfm" aria-label="شريحة RFM"><option value="">كل الشرائح</option></select>
+          <select id="sort" aria-label="الترتيب">
+            <option value="total_spend">الأعلى إنفاقًا</option>
+            <option value="orders_delivered">الأكتر طلبات</option>
+            <option value="days_since_last_order">الأحدث شراءً</option>
+            <option value="user_id">رقم العميل</option>
+          </select>
+        </form>
+
+        <div class="table-wrap panel flush">
+          <table id="customers">
+            <thead>
+              <tr><th>العميل</th><th>المدينة</th><th>النوع</th><th>الطلبات</th><th>الإنفاق</th><th>آخر طلب</th><th>الشريحة</th><th>الحالة</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========== الشرائح (RFM) ========== -->
+      <section id="view-segments" class="view hidden">
+        <header class="page-head">
+          <h1>شرائح العملاء (RFM)</h1>
+          <p class="sub">مين أحسن عملائنا، ومين محتاج اهتمام؟ كل عميل بيتقيّم بآخر شراء وعدد الطلبات والإنفاق.</p>
+        </header>
+        <div class="grid g-wide">
+          <article class="panel flush table-wrap"><table id="seg-table"><thead><tr><th>الشريحة</th><th>العملاء</th><th>% من العملاء</th><th>% من الإيراد</th><th>متوسط الطلب</th><th>طلبات/سنة</th></tr></thead><tbody></tbody></table></article>
+          <article class="panel"><h2>توزيع العملاء</h2><p class="hint">عدد العملاء في كل شريحة</p><div id="seg-donut"></div></article>
+        </div>
+        <div class="tabs" id="seg-tabs" role="tablist" aria-label="اختاري شريحة"></div>
+        <div id="seg-detail"></div>
+        <p class="foot-note" id="seg-note"></p>
+      </section>
+
+      <!-- ========== الإجراءات والحملات ========== -->
+      <section id="view-actions" class="view hidden">
+        <header class="page-head">
+          <h1>الإجراءات والحملات</h1>
+          <p class="sub">من الاستنتاج للإجراء: إيه اللي نعمله مع كل شريحة.</p>
+        </header>
+        <div id="act-rows" class="act-rows"></div>
+        <div id="act-cards" class="cards3"></div>
+      </section>
+
+      <!-- ========== ملف العميل ========== -->
+      <section id="view-profile" class="view hidden">
+        <a href="#customers" class="back" id="back"></a>
+        <div id="profile-body"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="tip" class="tip" role="tooltip" hidden></div>
+  <script src="static/app.js"></script>
+</body>
+</html>
